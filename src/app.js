@@ -7,17 +7,8 @@
 var UI = require('ui');
 //var Vector2 = require('vector2');
 
-var mainItems = {
-  title: 'ToDo',
-  //icon: 'images/menu_icon.png',
-  //subtitle: "Don't forget!",
-  //body: 'Press any button.'
-};
-
 function getTodos() {
   var fromLocal = localStorage.getItem('todos');
-  console.log("localStorage.getItem('todos') //=> ");
-  console.log(fromLocal);
   if(fromLocal === null) {
     return {};
   } else
@@ -51,25 +42,16 @@ function unsetTodo(todo) {
 }
 
 function checkTodo(todo) {
-  if(todo == 'Home') {
-    return 1;
-  } else {
-    return getTodos()[todo] == 1;
-  }
+  return getTodos()[todo] == 1;
 }
 
 function saveTodoData(data) {
-  console.log('start saveTodoData');
-  console.log(JSON.stringify(data));
   localStorage.setItem('todos', JSON.stringify(data));
-  console.log(JSON.stringify(getTodos()));
 }
 
 function getTodosCount() {
-  console.log('start getTodosCount');
   var count = 0,
       current = getTodos();
-  console.log(current);
   for (var prop in current) {
     if(current[prop] == 1) {
       count++;
@@ -79,12 +61,18 @@ function getTodosCount() {
 }
 
 function mainSubtitleStr() {
-  return "You have "+getTodosCount()+" Todos.";
+  var count = getTodosCount();
+  if(count == 1) {
+    return "1 Todo";
+  } else {
+    return count + " Todos";
+  }
 }
 
-mainItems.subtitle = mainSubtitleStr();
-
-var main = new UI.Card(mainItems);
+var main = new UI.Card({
+  title: 'ToDo',
+  subtitle: mainSubtitleStr(),
+});
 main.show();
 
 main.on('click', 'select', function(e) {
@@ -97,6 +85,9 @@ main.on('click', 'select', function(e) {
       }, {
         title: 'Work',
         subtitle: checkTodo('Work') ? 'Set' : 'Unset'
+      }, {
+        title: 'Misc',
+        subtitle: checkTodo('Misc') ? 'Set' : 'Unset'
       }]
     }]
   });
