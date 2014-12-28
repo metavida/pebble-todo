@@ -16,6 +16,8 @@ var mainItems = {
 
 function getTodos() {
   var fromLocal = localStorage.getItem('todos');
+  console.log("localStorage.getItem('todos') //=> ");
+  console.log(fromLocal);
   if(fromLocal === null) {
     return {};
   } else
@@ -49,16 +51,25 @@ function unsetTodo(todo) {
 }
 
 function checkTodo(todo) {
-  return getTodos()[todo] == 1;
+  if(todo == 'Home') {
+    return 1;
+  } else {
+    return getTodos()[todo] == 1;
+  }
 }
 
 function saveTodoData(data) {
-  localStorage.setItem(JSON.stringify(data));
+  console.log('start saveTodoData');
+  console.log(JSON.stringify(data));
+  localStorage.setItem('todos', JSON.stringify(data));
+  console.log(JSON.stringify(getTodos()));
 }
 
 function getTodosCount() {
+  console.log('start getTodosCount');
   var count = 0,
       current = getTodos();
+  console.log(current);
   for (var prop in current) {
     if(current[prop] == 1) {
       count++;
@@ -67,8 +78,11 @@ function getTodosCount() {
   return count;
 }
 
-//if(getTodosCount() > 0) {}
-mainItems.subtitle = "You have "+getTodosCount()+" Todos.";
+function mainSubtitleStr() {
+  return "You have "+getTodosCount()+" Todos.";
+}
+
+mainItems.subtitle = mainSubtitleStr();
 
 var main = new UI.Card(mainItems);
 main.show();
@@ -87,9 +101,13 @@ main.on('click', 'select', function(e) {
     }]
   });
   menu.on('select', function(e) {
-    toggleTodo(e.item.title);
+    var selectedTitle = e.item.title;
+    toggleTodo(selectedTitle);
     console.log('Selected item #' + e.itemIndex + ' of section #' + e.sectionIndex);
-    console.log('The item is titled "' + e.item.title + '"');
+    console.log('The item is titled "' + selectedTitle + 
+                '" and is now ' + (checkTodo(selectedTitle) ? 'Set' : 'Unset')
+               );
+    main.subtitle(mainSubtitleStr());
   });
   menu.show();
 });
