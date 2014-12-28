@@ -5,7 +5,7 @@
  */
 
 var UI = require('ui');
-var Vector2 = require('vector2');
+//var Vector2 = require('vector2');
 
 var mainItems = {
   title: 'ToDo',
@@ -15,7 +15,17 @@ var mainItems = {
 };
 
 function getTodos() {
-  return JSON.parse(localStorage.getItem('todos'));
+  var fromLocal = localStorage.getItem('todos');
+  if(fromLocal === null) {
+    return {};
+  } else
+    try {
+      return JSON.parse(fromLocal);
+    } catch (err) {
+      console.log('Error!!!');
+      console.log(err);
+      return {};
+    }
 }
 
 function toggleTodo(todo) {
@@ -69,10 +79,10 @@ main.on('click', 'select', function(e) {
       items: [{
         title: 'Home',
         //icon: 'images/menu_icon.png',
-        subtitle: checkTodo('Home') ? 'Set' : 'Unset';
+        subtitle: checkTodo('Home') ? 'Set' : 'Unset'
       }, {
         title: 'Work',
-        subtitle: checkTodo('Work') ? 'Set' : 'Unset';
+        subtitle: checkTodo('Work') ? 'Set' : 'Unset'
       }]
     }]
   });
