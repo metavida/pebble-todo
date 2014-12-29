@@ -75,7 +75,7 @@ var ToDos = {};
   };
 
   var todoTitleByIndex = function(index) {
-    return Todos.todoItems[index].title;
+    return ToDos.todoItems[index].title;
   };
 
   /* Public API */
@@ -150,14 +150,13 @@ function setMenuTodoItem(itemIndex) {
 }
 
 main.on('click', 'select', function(e) {
-  for (var i in todoItems) {
+  for (var i in ToDos.todoItems) {
     setMenuTodoItem(i);
   }
   menu.show();
 });
 
 menu.on('select', function(e) {
-  var itemTitle = todoItems[e.itemIndex];
   ToDos.toggleTodo(e.itemIndex);
   console.log(ToDos.UI.itemTitleStrWithSelectStatus(e.itemIndex));
   setMenuTodoItem(e.itemIndex);
