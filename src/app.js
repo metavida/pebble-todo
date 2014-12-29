@@ -4,8 +4,22 @@
  * This is where you write your app.
  */
 
+var debug = true;
+
 var UI = require('ui');
 //var Vector2 = require('vector2');
+
+var todoItems = [
+  'Home', 
+  'Work', 
+  'Food', 
+  'Pet', 
+  'Misc'
+];
+
+if(debug) {
+  localStorage.setItem('todos', '{}');
+}
 
 function getTodos() {
   var fromLocal = localStorage.getItem('todos');
@@ -75,28 +89,42 @@ var main = new UI.Card({
 });
 main.show();
 
-main.on('click', 'select', function(e) {
-  var menu = new UI.Menu({
+var menu = new UI.Menu({
     sections: [{
-      items: [{
-        title: 'Home',
-        //icon: 'images/menu_icon.png',
-        subtitle: checkTodo('Home') ? 'Set' : 'Unset'
-      }, {
-        title: 'Work',
-        subtitle: checkTodo('Work') ? 'Set' : 'Unset'
-      }, {
-        title: 'Misc',
-        subtitle: checkTodo('Misc') ? 'Set' : 'Unset'
-      }]
+      items: []
     }]
   });
+
+function menuItemTitleStr(item) {
+  console.log('call menuItemTitleStr('+item+')');
+  console.log('checkTodo('+item+') => '+checkTodo(item));
+  console.log(JSON.stringify(getTodos()));
+  return checkTodo(item) ? '+ '+item : '- '+item;
+}
+
+function setMenuTodoItem(item, itemIndex) {
+  console.log('call setMenuTodoItem('+item+', '+itemIndex+')');
+  menu.item(0, itemIndex, {
+    title: menuItemTitleStr(item)
+  });
+}
+
+main.on('click', 'select', function(e) {
+  
+  
+  var itemIndex = 0;
+  for (var i in todoItems) {
+    setMenuTodoItem(todoItems[i], itemIndex);
+    itemIndex++;
+  }
   menu.on('select', function(e) {
-    var selectedTitle = e.item.title;
-    toggleTodo(selectedTitle);
+    var itemTitle = todoItems[e.itemIndex];
+    toggleTodo(itemTitle);
+    console.log(menuItemTitleStr(itemTitle));
+    setMenuTodoItem(itemTitle, e.itemIndex);
     console.log('Selected item #' + e.itemIndex + ' of section #' + e.sectionIndex);
-    console.log('The item is titled "' + selectedTitle + 
-                '" and is now ' + (checkTodo(selectedTitle) ? 'Set' : 'Unset')
+    console.log('The item is titled "' + e.item.title + 
+                '" and is now ' + (checkTodo(itemTitle) ? 'Set' : 'Unset')
                );
     main.subtitle(mainSubtitleStr());
   });
