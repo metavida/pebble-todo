@@ -78,6 +78,30 @@ var ToDos = {};
     return ToDos.todoItems[index].title;
   };
 
+  /* Private UI Methods */
+  var setMenuTodoItem = function(itemIndex) {
+    ToDos.UI.menu.item(0, itemIndex, {
+      title: itemTitleStrWithSelectStatus(itemIndex)
+    });
+  };
+
+  var numTodoStr = function() {
+    var count = getTodosCount();
+    if(count == 1) {
+      return "1 Todo";
+    } else {
+      return count + " Todos";
+    }
+  };
+
+  var itemTitleStrWithSelectStatus = function(todoIndex) {
+    var todoTitle = todoTitleByIndex(todoIndex);
+    console.log('call menuItemTitleStr('+todoTitle+')');
+    console.log('checkTodo('+todoTitle+') => '+checkTodo(todoTitle));
+    console.log(JSON.stringify(getTodos()));
+    return checkTodo(todoTitle) ? '+ '+todoTitle : '- '+todoTitle;
+  };
+
   /* Public API */
   ToDos = {
     todoItems: [
@@ -110,60 +134,39 @@ var ToDos = {};
     toggleTodo: toggleTodo,
 
     UI: {
-      numTodoStr: function() {
-        var count = getTodosCount();
-        if(count == 1) {
-          return "1 Todo";
-        } else {
-          return count + " Todos";
-        }
-      },
+      main: new UI.Card({
+        title: 'ToDo',
+        subtitle: numTodoStr(),
+      }),
 
-      itemTitleStrWithSelectStatus: function(todoIndex) {
-        var todoTitle = todoTitleByIndex(todoIndex);
-        console.log('call menuItemTitleStr('+todoTitle+')');
-        console.log('checkTodo('+todoTitle+') => '+checkTodo(todoTitle));
-        console.log(JSON.stringify(getTodos()));
-        return checkTodo(todoTitle) ? '+ '+todoTitle : '- '+todoTitle;
-      }
+      menu: new UI.Menu({
+        sections: [{
+          items: []
+        }]
+      }),
+
+
     }
   };
+
+  main.on('click', 'select', function(e) {
+    for (var i in ToDos.todoItems) {
+      setMenuTodoItem(i);
+    }
+    menu.show();
+  });
+
+  menu.on('select', function(e) {
+    ToDos.toggleTodo(e.itemIndex);
+    console.log(ToDos.UI.itemTitleStrWithSelectStatus(e.itemIndex));
+    setMenuTodoItem(e.itemIndex);
+    console.log('Selected item #' + e.itemIndex + ' of section #' + e.sectionIndex);
+    console.log('The item is now titled "' + e.item.title);
+    ToDos.UI.main.subtitle(numTodoStr());
+  });
 })();
 
-var main = new UI.Card({
-  title: 'ToDo',
-  subtitle: ToDos.UI.numTodoStr(),
-});
-main.show();
-
-var menu = new UI.Menu({
-    sections: [{
-      items: []
-    }]
-  });
-
-function setMenuTodoItem(itemIndex) {
-  console.log('call setMenuTodoItem('+itemIndex+')');
-  menu.item(0, itemIndex, {
-    title: ToDos.UI.itemTitleStrWithSelectStatus(itemIndex)
-  });
-}
-
-main.on('click', 'select', function(e) {
-  for (var i in ToDos.todoItems) {
-    setMenuTodoItem(i);
-  }
-  menu.show();
-});
-
-menu.on('select', function(e) {
-  ToDos.toggleTodo(e.itemIndex);
-  console.log(ToDos.UI.itemTitleStrWithSelectStatus(e.itemIndex));
-  setMenuTodoItem(e.itemIndex);
-  console.log('Selected item #' + e.itemIndex + ' of section #' + e.sectionIndex);
-  console.log('The item is now titled "' + e.item.title);
-  main.subtitle(ToDos.UI.numTodoStr());
-});
+ToDos.UI.main.show();
 
 /*
 main.on('click', 'select', function(e) {
