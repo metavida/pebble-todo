@@ -149,44 +149,21 @@ var ToDos = {};
     }
   };
 
-  main.on('click', 'select', function(e) {
+  ToDos.UI.main.on('click', 'select', function(e) {
     for (var i in ToDos.todoItems) {
       setMenuTodoItem(i);
     }
-    menu.show();
+    ToDos.UI.menu.show();
   });
 
-  menu.on('select', function(e) {
-    ToDos.toggleTodo(e.itemIndex);
-    console.log(ToDos.UI.itemTitleStrWithSelectStatus(e.itemIndex));
+  ToDos.UI.menu.on('select', function(e) {
+    toggleTodo(e.itemIndex);
+    console.log(itemTitleStrWithSelectStatus(e.itemIndex));
     setMenuTodoItem(e.itemIndex);
-    console.log('Selected item #' + e.itemIndex + ' of section #' + e.sectionIndex);
+    console.log('Selected item #' + e.itemIndex + ' of section #' + e.sectionIndex );
     console.log('The item is now titled "' + e.item.title);
     ToDos.UI.main.subtitle(numTodoStr());
   });
 })();
 
 ToDos.UI.main.show();
-
-/*
-main.on('click', 'select', function(e) {
-  var wind = new UI.Window();
-  var textfield = new UI.Text({
-    position: new Vector2(0, 50),
-    size: new Vector2(144, 30),
-    font: 'gothic-24-bold',
-    text: 'Text Anywhere!',
-    textAlign: 'center'
-  });
-  wind.add(textfield);
-  wind.show();
-});
-
-main.on('click', 'down', function(e) {
-  var card = new UI.Card();
-  card.title('A Card');
-  card.subtitle('Is a Window');
-  card.body('The simplest window type in Pebble.js.');
-  card.show();
-});
-*/
